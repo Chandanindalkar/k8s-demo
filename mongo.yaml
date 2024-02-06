@@ -1,4 +1,3 @@
-# mongodb deployment and service config
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -52,7 +51,7 @@ spec:
     app: mongo
   ports:
     - protocol: TCP
-    # the port sets the PORT for the service itself
-    port: 8080
-    # the targetPort forwards the requests to the pods
-    targetPort: 27017
+      # the port sets the PORT for the service itself
+      port: 8080
+      # the targetPort forwards the requests to the pods
+      targetPort: 27017

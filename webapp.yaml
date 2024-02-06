@@ -1,4 +1,4 @@
-# mongodb deployment and service config
+# webapp deployment and service config
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -42,7 +42,7 @@ spec:
         # db endpoint from ConfigMap
         - name: DB_URL
           valueFrom:
-            configMapRef:
+            configMapKeyRef:
               name: mongo-config
               key: mongo-url
 ---
