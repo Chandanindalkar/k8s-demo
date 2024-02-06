@@ -1,0 +1,42 @@
+# mongodb deployment and service config
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-deployment
+  # labels are additional identifiers to the components in addition to "name"
+  labels:
+    app: mongo
+# deployment specific configuration
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  # template is the configuration of the pod, within the configuration of the deployment
+  template:
+    metadata:
+      labels:
+        app: mongo
+    # the spec of the template is the definition of the container
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:5.0
+        ports:
+        - containerPort: 27017
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-service
+spec:
+  selector: 
+  # this should match labels of the pods that belong to the service
+  # forward traffic to pods
+    app: mongo
+  ports:
+    - protocol: TCP
+    # the port sets the PORT for the service itself
+    port: 8080
+    # the targetPort forwards the requests to the pods
+    targetPort: 27017

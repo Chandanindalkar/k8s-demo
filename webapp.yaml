@@ -1,0 +1,42 @@
+# mongodb deployment and service config
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-deployment
+  # labels are additional identifiers to the components in addition to "name"
+  labels:
+    app: webapp
+# deployment specific configuration
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapp
+  # template is the configuration of the pod, within the configuration of the deployment
+  template:
+    metadata:
+      labels:
+        app: webapp
+    # the spec of the template is the definition of the container
+    spec:
+      containers:
+      - name: mongodb
+        image: nanajanashia/k8s-demo-app:v1.0
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service
+spec:
+  selector: 
+  # this should match labels of the pods that belong to the service
+  # forward traffic to pods
+    app: webapp
+  ports:
+    - protocol: TCP
+    # the port sets the PORT for the service itself
+    port: 3000
+    # the targetPort forwards the requests to the pods
+    targetPort: 3000
