@@ -24,6 +24,22 @@ spec:
         image: mongo:5.0
         ports:
         - containerPort: 27017
+        # setting mongo login
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+          # passing value from SECRET
+            secretKeyRef:
+              name: mongo-secret
+              # get the value from key in secret
+              key: mongo-user
+        # same for password
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-password
+        # when this starts, a user with the above credentials is created
 ---
 apiVersion: v1
 kind: Service

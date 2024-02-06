@@ -24,19 +24,47 @@ spec:
         image: nanajanashia/k8s-demo-app:v1.0
         ports:
         - containerPort: 3000
+        # the web app image has been written to accept credentials
+        # to connect to db via its endpoint as env variables.
+        env:
+        - name: USER_NAME # config in app
+          valueFrom:
+          # passing value from SECRET
+            secretKeyRef:
+              name: mongo-secret
+              # get the value from key in secret
+              key: mongo-user
+        - name: USER_PWD
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-password
+        # db endpoint from ConfigMap
+        - name: DB_URL
+          valueFrom:
+            configMapRef:
+              name: mongo-config
+              key: mongo-url
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: webapp-service
 spec:
+  # default type = ClusterIP
+  # NodePOrt is an external service type, and it requires a third port, below in ports field
+  type: NodePort
   selector: 
   # this should match labels of the pods that belong to the service
   # forward traffic to pods
     app: webapp
   ports:
     - protocol: TCP
-    # the port sets the PORT for the service itself
-    port: 3000
-    # the targetPort forwards the requests to the pods
-    targetPort: 3000
+      # the port sets the PORT for the service itself
+      port: 3000
+      # the targetPort forwards the requests to the pods
+      targetPort: 3000
+      # third port for NodePort: exposes the Service on each Node's IP at a static port
+      # accessed by <NodeIP>:<NodePort>
+      # nodePort range is 30000-32767
+      nodePort: 30100
